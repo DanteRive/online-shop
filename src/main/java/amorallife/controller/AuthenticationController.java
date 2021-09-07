@@ -6,7 +6,7 @@ import amorallife.entity.User;
 import amorallife.entity.UserRole;
 import amorallife.security.jwt.JwtTokenProvider;
 import amorallife.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -24,6 +24,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/auth/")
+@AllArgsConstructor
 public class AuthenticationController {
 
     private AuthenticationManager authenticationManager;
@@ -31,13 +32,6 @@ public class AuthenticationController {
     private JwtTokenProvider jwtTokenProvider;
 
     private UserService userService;
-
-    @Autowired
-    public AuthenticationController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UserService userService) {
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.userService = userService;
-    }
 
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody AuthenticationRequestDto authenticationRequestDto){
