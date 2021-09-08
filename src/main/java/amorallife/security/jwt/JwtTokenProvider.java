@@ -2,7 +2,6 @@ package amorallife.security.jwt;
 
 import amorallife.entity.Role;
 import amorallife.security.JwtUserDetailsService;
-import amorallife.security.jwt.JwtAuthenticationException;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
