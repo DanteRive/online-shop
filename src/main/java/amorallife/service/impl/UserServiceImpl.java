@@ -1,11 +1,19 @@
 package amorallife.service.impl;
 
+import amorallife.dto.AuthenticationRequestDto;
 import amorallife.entity.Role;
 import amorallife.entity.User;
 import amorallife.entity.UserRole;
 import amorallife.repository.RoleRepository;
 import amorallife.repository.UserRoleRepository;
+import amorallife.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,13 +22,17 @@ import amorallife.mapper.UserMapper;
 import amorallife.repository.UserRepository;
 import amorallife.service.UserService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
+    private JwtTokenProvider jwtTokenProvider;
+    private AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
     private final RoleRepository roleRepository;
@@ -67,5 +79,30 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll().stream()
                 .map(UserMapper::userToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public ResponseEntity<?> login(AuthenticationRequestDto authenticationRequestDto) {
+        try {
+            String username = authenticationRequestDto.getUsername();
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, authenticationRequestDto.getPassword()));
+            User user = findByUsername(username);
+
+            if (user == null){
+                throw new UsernameNotFoundException("User: " + username + " not found");
+            }
+
+            UserRole userRole = findRoleById(user.getId());
+            String token = jwtTokenProvider.createToken(username, (List<Role>) userRole);
+
+            Map<Object, Object> response = new HashMap<>();
+            response.put("username", username);
+            response.put("token", token);
+
+            return ResponseEntity.ok(response);
+
+        }catch (AuthenticationException e){
+            throw new BadCredentialsException("Invalid username or password");
+        }
     }
 }

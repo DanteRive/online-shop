@@ -11,13 +11,9 @@ public interface ProductService {
 
     ProductDto saveProduct(ProductDto dto);
 
-    Product getOne(Product product);
-
     List<ProductDto> findAll();
 
-    Product create(Product product);
-
-    Product update(Product productFromDB, Product product);
-
     void delete(Product product);
+
+    void fillProduct(Product product, ProductDto dto);
 }

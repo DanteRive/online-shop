@@ -49,30 +49,14 @@ public class ProductServiceImpl implements ProductService {
         return ProductMapper.productToDto(productRepository.saveAndFlush(product));
     }
 
-    @Override
-    public Product getOne(Product product) {
-        return productRepository.getOne(product.getId());
-    }
-
-
-    @Override
-    public Product create(Product product) {
-        return productRepository.save(product);
-    }
-
-    @Override
-    public Product update(Product productFromDB, Product product) {
-
-        BeanUtils.copyProperties(product, productFromDB, "id");
-        return productRepository.save(productFromDB);
-    }
 
     @Override
     public void delete(Product product) {
         productRepository.delete(product);
     }
 
-    private void fillProduct(Product product, ProductDto dto) {
+    @Override
+    public void fillProduct(Product product, ProductDto dto) {
         product.setPrice(dto.getPrice());
         product.setName(dto.getName());
         product.setType(dto.getType());

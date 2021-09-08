@@ -15,7 +15,7 @@ public class OrderController {
 
     @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public OrderDto getOrder(@PathVariable Long id) {
-        return orderService.getOder(id);
+        return orderService.getOrder(id);
     }
 
     @PostMapping(value = "/save", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})

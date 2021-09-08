@@ -1,7 +1,13 @@
 package amorallife.service.impl;
 
+import amorallife.dto.UserDto;
 import amorallife.entity.User;
+import amorallife.mapper.UserMapper;
+import amorallife.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import amorallife.dto.OrderDto;
@@ -17,6 +23,7 @@ import amorallife.repository.UserRepository;
 import amorallife.service.OrderService;
 
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +32,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
+    private AuthenticationManager authenticationManager;
+    private JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
@@ -33,8 +42,15 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public OrderDto getOder(Long id) {
+    public OrderDto getOrder(Long id) {
         return OrderMapper.orderToDto(orderRepository.getOne(id));
+    }
+
+    @Override
+    public OrderDto getOrderBycurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(authentication.getName());
+        return OrderMapper.orderToDto(orderRepository.findByUserId(user.getId()));
     }
 
     @Override
@@ -71,7 +87,10 @@ public class OrderServiceImpl implements OrderService {
         for (ProductDto productDto : dto.getProducts()) {
             generalPrice += productDto.getPrice();
         }
-        order.setUser(dto.getUserName() != null ? userRepository.findByUsername(dto.getUserName()) : null);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(authentication.getName());
+        order.setUser(user);
+//        order.setUser(dto.getUserName() != null ? userRepository.findByUsername(dto.getUserName()) : null);
         order.setGeneralPrice(generalPrice);
     }
 

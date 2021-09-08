@@ -6,6 +6,8 @@ public interface OrderService {
 
     OrderDto save(OrderDto dto);
 
-    OrderDto getOder(Long id);
+    OrderDto getOrder(Long id);
+
+    OrderDto getOrderBycurrentUser();
 
 }
