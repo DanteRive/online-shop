@@ -44,6 +44,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public OrderDto getOrderBycurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName());
@@ -71,6 +72,7 @@ public class OrderServiceImpl implements OrderService {
 
         return OrderMapper.orderToDto(order);
     }
+
 
     private OrderToProduct saveOrderToProduct(Order order, Product product) {
         OrderToProduct orderToProduct = new OrderToProduct();

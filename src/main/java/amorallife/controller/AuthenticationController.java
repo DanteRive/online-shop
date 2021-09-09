@@ -17,7 +17,7 @@ public class AuthenticationController {
     private UserService userService;
 
     @PostMapping("login")
-    public ResponseEntity<?> login(@RequestBody AuthenticationRequestDto authenticationRequestDto){
-        return userService.login(authenticationRequestDto);
+    public void login(@RequestBody AuthenticationRequestDto authenticationRequestDto){
+        userService.login(authenticationRequestDto);
     }
 }

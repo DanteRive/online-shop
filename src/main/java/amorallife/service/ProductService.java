@@ -13,7 +13,5 @@ public interface ProductService {
 
     List<ProductDto> findAll();
 
-    void delete(Product product);
-
-    void fillProduct(Product product, ProductDto dto);
+    void delete(Long id);
 }

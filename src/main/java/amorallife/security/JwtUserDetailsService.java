@@ -1,5 +1,6 @@
 package amorallife.security;
 
+import amorallife.dto.UserDto;
 import amorallife.entity.User;
 import amorallife.entity.UserRole;
 import amorallife.security.jwt.JwtUser;
@@ -23,7 +24,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userService.findByUsername(username);
+        UserDto user = userService.findByUsername(username);
         UserRole userRole = userService.findRoleById(user.getId());
         if (user == null){
             throw new UsernameNotFoundException("User: " + username + " not found");

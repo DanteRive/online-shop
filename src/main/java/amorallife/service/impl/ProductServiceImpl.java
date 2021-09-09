@@ -50,12 +50,12 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public void delete(Product product) {
-        productRepository.delete(product);
+    @Transactional
+    public void delete(Long id) {
+        productRepository.delete(productRepository.getOne(id));
     }
 
-    @Override
-    public void fillProduct(Product product, ProductDto dto) {
+    private void fillProduct(Product product, ProductDto dto) {
         product.setPrice(dto.getPrice());
         product.setName(dto.getName());
         product.setType(dto.getType());

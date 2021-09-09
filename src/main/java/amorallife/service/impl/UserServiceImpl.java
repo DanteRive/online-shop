@@ -8,7 +8,6 @@ import amorallife.repository.RoleRepository;
 import amorallife.repository.UserRoleRepository;
 import amorallife.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,21 +38,21 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public User register(User user, UserRole userRole) {
+    public UserDto register(User user, UserRole userRole) {
         Role roleUser = roleRepository.findByName("ROLE_USER");
         userRole.setUser(user);
         userRole.setRole(roleUser);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setActive(true);
-        User registeredUser = userRepository.save(user);
+        UserDto registeredUser = UserMapper.userToDto(userRepository.save(user));
 
         return registeredUser;
     }
 
     @Override
-    public User findByUsername(String name) {
-        User result = userRepository.findByUsername(name);
-        return result;
+    public UserDto findByUsername(String name) {
+        UserDto user = UserMapper.userToDto(userRepository.findByUsername(name));
+        return user;
     }
 
     @Override
@@ -63,9 +62,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findById(Long id) {
-        User result = userRepository.findById(id).orElse(null);
-        return result;
+    public UserDto findById(Long id) {
+        UserDto user = UserMapper.userToDto(userRepository.getOne(id));
+        return user;
     }
 
     @Override
@@ -82,11 +81,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<?> login(AuthenticationRequestDto authenticationRequestDto) {
+    @Transactional
+    public void login(AuthenticationRequestDto authenticationRequestDto) {
         try {
             String username = authenticationRequestDto.getUsername();
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, authenticationRequestDto.getPassword()));
-            User user = findByUsername(username);
+            UserDto user = findByUsername(username);
 
             if (user == null){
                 throw new UsernameNotFoundException("User: " + username + " not found");
@@ -98,8 +98,6 @@ public class UserServiceImpl implements UserService {
             Map<Object, Object> response = new HashMap<>();
             response.put("username", username);
             response.put("token", token);
-
-            return ResponseEntity.ok(response);
 
         }catch (AuthenticationException e){
             throw new BadCredentialsException("Invalid username or password");

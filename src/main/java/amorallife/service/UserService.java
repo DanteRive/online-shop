@@ -10,19 +10,18 @@ import java.util.List;
 
 public interface UserService {
 
-    User register(User user, UserRole userRolerole);
+    UserDto register(User user, UserRole userRolerole);
 
-    User findByUsername(String name);
+    UserDto findByUsername(String name);
 
     UserRole findRoleById(Long id);
 
-    User findById(Long id);
+    UserDto findById(Long id);
 
     void delete(Long id);
 
     List<UserDto> getAllUsers();
 
-    ResponseEntity<?> login(AuthenticationRequestDto authenticationRequestDto);
-
+    void login(AuthenticationRequestDto authenticationRequestDto);
 
 }
