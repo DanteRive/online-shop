@@ -2,10 +2,12 @@ package amorallife.service.impl;
 
 import amorallife.dto.ProductDto;
 import amorallife.entity.Product;
+import amorallife.entity.ProductType;
 import amorallife.mapper.ProductMapper;
 import amorallife.repository.ProductRepository;
 import amorallife.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +23,24 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ProductDto> findAll() {
-        return productRepository.findAllByOrderByPrice().stream()
+    public List<ProductDto> findAll(Pageable pageable) {
+        return productRepository.findAllByOrderByPrice(pageable).stream()
+                .map(ProductMapper::productToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductDto> findByType(ProductType productType, Pageable pageable) {
+        return productRepository.findAllByProductType(productType, pageable).stream()
+                .map(ProductMapper::productToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductDto> findByLikeName(String name, Pageable pageable) {
+        return productRepository.findAllByNameLike(name, pageable).stream()
                 .map(ProductMapper::productToDto)
                 .collect(Collectors.toList());
     }
@@ -47,7 +65,6 @@ public class ProductServiceImpl implements ProductService {
         fillProduct(product, dto);
         return ProductMapper.productToDto(productRepository.saveAndFlush(product));
     }
-
 
     @Override
     @Transactional

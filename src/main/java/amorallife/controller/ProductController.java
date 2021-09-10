@@ -1,6 +1,9 @@
 package amorallife.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import amorallife.dto.ProductDto;
@@ -16,12 +19,12 @@ public class ProductController {
     private final ProductServiceImpl productService;
 
     @GetMapping(value = "/all", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public List<ProductDto> getAllProducts() {
-        return productService.findAll();
+    public List<ProductDto> getAllProducts(@PageableDefault(sort = { "id" }) Pageable pageable) {
+        return productService.findAll(pageable);
     }
 
     @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ProductDto getProduct(@PathVariable Long id) {
+    public ProductDto getProduct(@PathVariable("id") Long id) {
         return productService.getProduct(id);
     }
 

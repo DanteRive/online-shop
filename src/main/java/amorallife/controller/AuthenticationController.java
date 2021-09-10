@@ -1,23 +1,31 @@
 package amorallife.controller;
 
 import amorallife.dto.AuthenticationRequestDto;
-import amorallife.service.UserService;
+import amorallife.service.AuthenticationService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping(value = "/auth/")
 @AllArgsConstructor
 public class AuthenticationController {
 
-    private UserService userService;
+    private AuthenticationService authenticationService;
 
     @PostMapping("login")
     public void login(@RequestBody AuthenticationRequestDto authenticationRequestDto){
-        userService.login(authenticationRequestDto);
+        authenticationService.login(authenticationRequestDto);
     }
+
+    @PostMapping("logout")
+    public void logout(HttpServletRequest request, HttpServletResponse response){
+        authenticationService.logout(request, response);
+    }
+
 }

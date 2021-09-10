@@ -11,10 +11,9 @@ import amorallife.repository.OrderRepository;
 import amorallife.repository.OrderToProductRepository;
 import amorallife.repository.ProductRepository;
 import amorallife.repository.UserRepository;
-import amorallife.security.jwt.JwtTokenProvider;
+import amorallife.security.JwtUserDetailsService;
 import amorallife.service.OrderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -29,8 +28,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    private AuthenticationManager authenticationManager;
-    private JwtTokenProvider jwtTokenProvider;
+
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
